@@ -107,8 +107,8 @@ public class Pickup : MonoBehaviour
                 if(!interactableHit)
                     objectName.text = "None";
 
-                for(int i =0; i< GameObject.FindGameObjectsWithTag("Interactable").Length; i++ )
-                    GameObject.FindGameObjectsWithTag("Interactable")[i].GetComponent<Outline>().OutlineWidth = 0;
+                //for(int i =0; i< GameObject.FindGameObjectsWithTag("Interactable").Length; i++ )
+                //    GameObject.FindGameObjectsWithTag("Interactable")[i].GetComponent<Outline>().OutlineWidth = 0;
 
                 if(chosen)
                     for (int j = 0; j < GameObject.FindGameObjectsWithTag("AnswerText").Length; j++)
