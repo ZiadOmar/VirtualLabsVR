@@ -54,6 +54,7 @@ public class InteractableControlExp2 : MonoBehaviour
                 {
                     case "NH4":
                         Player.GetComponent<PickupExp2>().SamplesEffect["AgPb"].GetComponent<AgPb>().enabled = false;
+                        Player.GetComponent<PickupExp2>().SamplesEffect["SnHgCu"].GetComponent<SnHgCu>().enabled = false;
                         Player.GetComponent<PickupExp2>().IdentificationPanel.GetComponentInChildren<Text>().text = "A smell of Ammonia is detected";
                         if (name == "NaOH")
                         {
@@ -63,8 +64,20 @@ public class InteractableControlExp2 : MonoBehaviour
                     case "Ag":
                     case "Pb":
                         Player.GetComponent<PickupExp2>().SamplesEffect["NH4"].GetComponent<NH4>().enabled = false;
+                        Player.GetComponent<PickupExp2>().SamplesEffect["SnHgCu"].GetComponent<SnHgCu>().enabled = false;
                         Player.GetComponent<PickupExp2>().IdentificationPanel.GetComponentInChildren<Text>().text = "Smell of Ammonia is NOT detected";
                         if (name == "NaOH")
+                        {
+                            Player.GetComponent<PickupExp2>().NaOHDetect = true;
+                        }
+                        break;
+                    case "Sn":
+                    case "Hg":
+                    case "Cu":
+                        Player.GetComponent<PickupExp2>().SamplesEffect["NH4"].GetComponent<NH4>().enabled = false;
+                        Player.GetComponent<PickupExp2>().SamplesEffect["AgPb"].GetComponent<AgPb>().enabled = false;
+                        Player.GetComponent<PickupExp2>().IdentificationPanel.GetComponentInChildren<Text>().text = "Smell of Ammonia is NOT detected";
+                        if (name == "NaOH" && instructions.GetComponent<Instructions>().currentStep == 1)
                         {
                             Player.GetComponent<PickupExp2>().NaOHDetect = true;
                         }
@@ -138,6 +151,68 @@ public class InteractableControlExp2 : MonoBehaviour
                                 transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(255, 255, 0, 255); //Yellow      
                         }
                         break;
+                    case "Sn":
+                    case "Hg":
+                    case "Cu":
+                        if (Player.GetComponent<PickupExp2>().NaOHDetect)
+                        {
+                            Player.GetComponent<PickupExp2>().NaOHDetect = false;
+                            Player.GetComponent<PickupExp2>().IdentificationPanel.SetActive(true);
+                            StartCoroutine("WaitForIdentification");
+                            this.tag = "Interactable"; //used vial
+                            CreateVial(gameObject);
+                        }
+
+                        if (instructions.GetComponent<Instructions>().currentStep == 10) //Change Sample Color
+                        {
+                            switch (sampleTakenName)
+                            {
+                                case "Sn":
+                                    transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(154, 48, 0, 255); //Dark Brown
+                                    break;
+                                case "Hg":
+                                    transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(255, 255, 255, 255); //White then Yellow then Brown then Black
+                                    StartCoroutine("WaitForHgColor");
+                                    transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(255, 255, 0, 255); //Yellow then Brown
+                                    StartCoroutine("WaitForHgColor");
+                                    transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(142, 32, 0, 255); //Brown then Black
+                                    StartCoroutine("WaitForHgColor");
+                                    transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(0, 0, 0, 255); // Black
+                                    break;
+                                case "Cu":
+                                    transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(75, 24, 0, 255); //Black Brown
+                                    break;
+                            }
+                            this.tag = "Interactable"; //used vial
+                            CreateVial(gameObject);
+                            instructions.GetComponent<Instructions>().NextInstruction(instructions.GetComponent<Instructions>().currentStep);
+                        }
+                        if (instructions.GetComponent<Instructions>().currentStep == 15) //Change Sample Color
+                        {
+                            switch (sampleTakenName)
+                            {
+                                case "Sn":
+                                    transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(255, 255, 255, 255); //White
+                                    Player.GetComponent<PickupExp2>().IdentificationPanel.GetComponentInChildren<Text>().text = "The sample dissolves";
+                                    Player.GetComponent<PickupExp2>().IdentificationPanel.SetActive(true);
+                                    StartCoroutine("WaitForIdentification");
+                                    break;
+                                case "Hg":
+                                    transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(248, 61, 0, 255); //Reddish Brown then Black
+                                    StartCoroutine("WaitForHgColor");
+                                    Player.GetComponent<PickupExp2>().IdentificationPanel.GetComponentInChildren<Text>().text = "The sample doesn't dissolve";
+                                    Player.GetComponent<PickupExp2>().IdentificationPanel.SetActive(true);
+                                    StartCoroutine("WaitForIdentification");
+                                    break;
+                                case "Cu":
+                                    transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(32, 0, 255, 255); //Blue
+                                    Player.GetComponent<PickupExp2>().IdentificationPanel.GetComponentInChildren<Text>().text = "The sample doesn't dissolve";
+                                    Player.GetComponent<PickupExp2>().IdentificationPanel.SetActive(true);
+                                    StartCoroutine("WaitForIdentification");
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }
 
@@ -170,12 +245,13 @@ public class InteractableControlExp2 : MonoBehaviour
 
                 case "Ag":
                 case "Pb":
+                case "Sn":
+                case "Hg":
+                case "Cu":
                     instructions.GetComponent<Instructions>().NextInstruction(instructions.GetComponent<Instructions>().currentStep);
                     break;
             }
-
             newDispenser.transform.position = Vector3.zero;
-
         }
 
         if (tag == "Dispose" && other.tag == "Interactable" && other.name == "vial")
@@ -200,6 +276,15 @@ public class InteractableControlExp2 : MonoBehaviour
         yield return new WaitForSecondsRealtime(5f);
         Player.GetComponent<PickupExp2>().IdentificationPanel.SetActive(false);
         Player.GetComponent<PickupExp2>().Heat.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    IEnumerator WaitForHgColor()
+    {
+        yield return new WaitForSecondsRealtime(2f);     
+        if (instructions.GetComponent<Instructions>().currentStep == 15)
+        {
+            transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(0, 0, 0, 255); //Reddish Brown then Black
+        }
     }
 }
 

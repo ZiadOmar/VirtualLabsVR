@@ -42,6 +42,7 @@ public class PickupExp2 : MonoBehaviour
         looking = false;
         SamplesEffect.Add("NH4", Samples[0]);
         SamplesEffect.Add("AgPb", Samples[1]);
+        SamplesEffect.Add("SnHgCu", Samples[2]);
     }
 
     // Update is called once per frame
@@ -50,6 +51,7 @@ public class PickupExp2 : MonoBehaviour
         // Continue initializing after destroying of oldVial
         SamplesEffect["NH4"] = GameObject.FindGameObjectWithTag("NH4");
         SamplesEffect["AgPb"] = GameObject.FindGameObjectWithTag("AgPb");
+        SamplesEffect["SnHgCu"] = GameObject.FindGameObjectWithTag("SnHgCu");
         Heat = GameObject.FindGameObjectWithTag("Heat");
 
         // Bit shift the index of the layer (8) to get a bit mask
@@ -76,6 +78,7 @@ public class PickupExp2 : MonoBehaviour
 
                     if (looking && distance <= minDistance)
                     {
+                        // Bluetooth Controller: C
                         if (Input.GetButtonDown("Fire1"))
                         {
                             interactableHit = true;

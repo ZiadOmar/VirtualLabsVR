@@ -17,6 +17,7 @@ TagManager:
   - NH4
   - AgPb
   - Heat
+  - SnHgCu
   layers:
   - Default
   - TransparentFX
