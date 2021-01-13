@@ -9,6 +9,8 @@ public class InteractableControl : MonoBehaviour
 {
     public bool pullFrom;
 
+    bool PHDone;
+
     public string sampleTaken;
 
     public GameObject[] answers;
@@ -23,6 +25,7 @@ public class InteractableControl : MonoBehaviour
     {
         answers = GameObject.FindGameObjectsWithTag("AnswerText");
         Player = GameObject.FindGameObjectWithTag("Player");
+        PHDone = false;
     }
 
     // Update is called once per frame
@@ -44,7 +47,7 @@ public class InteractableControl : MonoBehaviour
 
 }
 
-        if (tag == "Substance" && other.tag == "Interactable" && other.GetComponent<Animator>().GetBool("StartSubstance") && !pullFrom)
+        if (tag == "Substance" && other.tag == "Interactable" && other.name != "pH paper" && other.GetComponent<Animator>().GetBool("StartSubstance") && !pullFrom)
         {
             GetComponent<Animator>().SetBool("increase", true);
             other.transform.position = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
@@ -77,34 +80,34 @@ public class InteractableControl : MonoBehaviour
 
         }
 
-        if (tag == "Substance" && other.tag == "Interactable" && other.name == "pH paper" && !pullFrom && !other.GetComponent<Animator>().GetBool("ChangeColor") && GetComponent<Animator>().GetBool("increase"))
+        if (tag == "Substance" && other.tag == "Interactable" && other.name == "pH paper" && !pullFrom && !PHDone)
         {
             instructions.GetComponent<Instructions>().NextInstruction(5);
             
             switch (sampleTaken)
             {
                 case "SO3":
-                    other.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.green;
+                    other.GetComponent<MeshRenderer>().material.color = Color.green;
                     Debug.Log(other.transform.GetChild(0).GetComponent<MeshRenderer>().material.color);
                     break;
                 case "S2O3":
-                    other.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.green;
+                    other.GetComponent<MeshRenderer>().material.color = Color.green;
                     transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.yellow;
                     break;
                 case "S2":
-                    other.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.black;
+                    other.GetComponent<MeshRenderer>().material.color = Color.black;
                     break;
                 case "NO2":
-                    other.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.blue;
+                    other.GetComponent<MeshRenderer>().material.color = Color.blue;
                     transform.GetChild(1).gameObject.SetActive(true);
                     break;
 
 
             }
-            
+
             other.transform.position = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
-            other.GetComponent<Animator>().SetBool("ChangeColor", true);
             other.transform.rotation = new Quaternion(90, 90, 180, 0);
+            PHDone = true;
         }
     }
 

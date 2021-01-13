@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
+
 [RequireComponent(typeof(CharacterController))]
 public class VRBluetoothController : MonoBehaviour
 {
@@ -25,7 +27,7 @@ public class VRBluetoothController : MonoBehaviour
         myCC.SimpleMove(speed * vrCamera.TransformDirection(Vector3.forward * Input.GetAxis("Vertical") +
        Vector3.right * Input.GetAxis("Horizontal")));
 
-        // Bluetooth Controller: A
+        // Bluetooth Controller: A (Teleport)
         if (Input.GetButtonDown("Fire2"))
         {
             teleporter.ToggleDisplay(true);
@@ -36,6 +38,11 @@ public class VRBluetoothController : MonoBehaviour
             teleporter.Teleport();
             teleporter.ToggleDisplay(false);
         }
-        
+
+        // Bluetooth Controller: D (Exit)
+        if (Input.GetButtonDown("Jump"))
+        {
+            SceneManager.LoadScene("MainScene");
+        }
     }
 }

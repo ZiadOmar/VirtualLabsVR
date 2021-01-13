@@ -102,7 +102,7 @@ public class UIControlExp2 : MonoBehaviour
 
     IEnumerator LoadMainScene()
     {
-        yield return new WaitForSecondsRealtime(5f);
+        yield return new WaitForSecondsRealtime(4f);
         SceneManager.LoadScene("MainScene");
     }
 }
